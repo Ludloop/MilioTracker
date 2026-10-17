@@ -2,8 +2,11 @@
 
 Desktop companion and in-game overlay for **League of Legends**, focused on players using **Milio Support**.
 
-Built with **Electron, Node.js and JavaScript**, MilioTracker reads live match information and presents useful macro, vision and performance data without interrupting gameplay.
+Built with **Electron, Node.js and JavaScript**.
 
+<p align="center">
+  <img src="assets/screenshots/second-monitor.png" alt="MilioTracker running with League of Legends">
+</p>
 ---
 
 ## ✨ Features
@@ -50,7 +53,9 @@ The application reads information from the League of Legends client during an ac
 
 ### In-game Overlay
 
-![MilioTracker overlay](assets/screenshots/overlay-ingame.png)
+<p align="center">
+  <img src="assets/screenshots/overlay-ingame.png" width="320" alt="MilioTracker in-game overlay">
+</p>
 
 ### Second Monitor Dashboard
 
