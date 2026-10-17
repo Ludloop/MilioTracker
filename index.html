@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>Milio Macro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="title-row">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">M</span>
+          <div>
+            <h1>Milio Macro</h1>
+            <p id="status-partida"><span class="live-dot"></span> Aguardando partida</p>
+          </div>
+        </div>
+
+        <div class="window-controls">
+          <button id="lock-position-button" class="window-action lock-action" type="button" aria-label="Bloquear posição" title="Bloquear posição">
+            <span id="lock-position-icon" aria-hidden="true">🔓</span>
+          </button>
+          <button id="minimize-button" class="window-action" type="button" aria-label="Minimizar overlay" title="Minimizar">
+            <span aria-hidden="true">—</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="live-stats" aria-label="Status da partida">
+        <div class="stat">
+          <span class="stat-icon clock-icon" aria-hidden="true"></span>
+          <div>
+            <span class="stat-label">Tempo</span>
+            <strong id="tempo-partida">00:00</strong>
+          </div>
+        </div>
+
+        <div class="stat">
+          <span class="stat-icon gold-icon" aria-hidden="true"></span>
+          <div>
+            <span class="stat-label">Ouro</span>
+            <strong id="ouro-atual">500</strong>
+          </div>
+        </div>
+
+        <div class="stat">
+          <span class="stat-icon level-icon" aria-hidden="true">9</span>
+          <div>
+            <span class="stat-label">Nível</span>
+            <strong id="nivel-atual">1</strong>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-content">
+      <section id="rank-card" class="rank-card" data-tier="LOADING" aria-live="polite">
+        <span class="rank-emblem" aria-hidden="true">◆</span>
+        <div class="rank-copy">
+          <span class="rank-label">ELO <b id="rank-queue">SOLO/DUO</b></span>
+          <strong id="rank-value">Carregando ELO…</strong>
+          <small id="rank-account">Detectando a conta logada</small>
+        </div>
+        <span id="rank-pdl" class="rank-pdl">— PDL</span>
+      </section>
+
+      <section class="panel vision-panel" aria-labelledby="vision-title">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Prioridade do suporte</span>
+            <h2 id="vision-title">Controle de visão</h2>
+          </div>
+          <span class="section-badge">VISÃO</span>
+        </div>
+
+        <div class="vision-progress" aria-label="Progresso dos lembretes">
+          <div class="progress-copy">
+            <span>Checklist atual</span>
+            <strong>0/3</strong>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <span></span>
+          </div>
+        </div>
+
+        <div class="checklist">
+          <label class="check-card priority">
+            <input type="checkbox" name="control-ward">
+            <span class="custom-check" aria-hidden="true"></span>
+            <span class="ward-icon control-ward" aria-hidden="true"></span>
+            <span class="check-copy">
+              <strong>Control Ward no inventário</strong>
+              <small>Compre sempre que voltar à base.</small>
+            </span>
+            <span class="tag urgent">AGORA</span>
+          </label>
+
+          <label class="check-card">
+            <input type="checkbox" name="objective-vision">
+            <span class="custom-check" aria-hidden="true"></span>
+            <span class="ward-icon stealth-ward" aria-hidden="true"></span>
+            <span class="check-copy">
+              <strong>Visão no próximo objetivo</strong>
+              <small>Prepare o rio 60–90s antes.</small>
+            </span>
+          </label>
+
+          <label class="check-card trinket-card">
+            <input type="checkbox" name="oracle-lens">
+            <span class="custom-check" aria-hidden="true"></span>
+            <span class="ward-icon oracle-lens" aria-hidden="true"></span>
+            <span class="check-copy">
+              <strong>Trocar para Lente do Oráculo</strong>
+              <small>Ao completar a missão ou chegar ao nível 9.</small>
+            </span>
+            <span class="tag level-tag">NÍVEL 9</span>
+          </label>
+        </div>
+
+        <div class="vision-tip">
+          <span class="tip-symbol" aria-hidden="true">!</span>
+          <p><strong>Regra rápida:</strong> nunca entre sozinho no escuro. Use o alcance do <b>Q</b> para checar arbustos.</p>
+        </div>
+      </section>
+
+      <section class="panel macro-panel" aria-labelledby="macro-title">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Decisão em segundos</span>
+            <h2 id="macro-title">Guia de macro</h2>
+          </div>
+          <span class="section-badge macro-badge">MILIO</span>
+        </div>
+
+        <div class="macro-list">
+          <article class="macro-item">
+            <span class="timeline-dot green" aria-hidden="true"></span>
+            <div class="macro-copy">
+              <div class="macro-meta">
+                <h3>Fase de rotas</h3>
+                <span>0–14 min</span>
+              </div>
+              <p>Jogue paralelo ao ADC, mantenha saída segura e acompanhe a rota do caçador inimigo.</p>
+              <div class="quick-call"><span>POSIÇÃO</span> Atrás da linha do ADC, nunca isolado.</div>
+            </div>
+          </article>
+
+          <article class="macro-item">
+            <span class="timeline-dot blue" aria-hidden="true"></span>
+            <div class="macro-copy">
+              <div class="macro-meta">
+                <h3>Rotação</h3>
+                <span>Após o push</span>
+              </div>
+              <p>Saia da rota apenas com a wave segura. Ajude o caçador no rio e volte antes do ADC se expor.</p>
+              <div class="quick-call"><span>ROTA</span> Bot → Rio → Mid → Bot.</div>
+            </div>
+          </article>
+
+          <article class="macro-item">
+            <span class="timeline-dot orange" aria-hidden="true"></span>
+            <div class="macro-copy">
+              <div class="macro-meta">
+                <h3>Teamfight</h3>
+                <span>Objetivos</span>
+              </div>
+              <p>Fique entre os carregadores. Guarde o <b>R</b> para controle decisivo e use o <b>W</b> no maior DPS.</p>
+              <div class="quick-call"><span>FOCO</span> Sobreviver → limpar CC → proteger carry.</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <p class="footer-note">MILIO SUPPORT • MACRO OVERLAY</p>
+    </main>
+    <span class="resize-grip" aria-hidden="true"></span>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>

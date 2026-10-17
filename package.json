@@ -1,0 +1,56 @@
+{
+  "name": "milio-tracker",
+  "version": "1.0.10",
+  "description": "Overlay de macro e visão para League of Legends",
+  "main": "main.js",
+  "author": "Ludmila Lopes",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "postinstall": "electron-builder install-app-deps",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win --x64"
+  },
+  "devDependencies": {
+    "electron": "^29.0.0",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.ludmilalopes.miliotracker",
+    "productName": "Milio Tracker",
+    "asar": true,
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "**/*",
+      "!dist/**/*",
+      "!*.log",
+      "!.env",
+      "!.env.*"
+    ],
+    "win": {
+      "icon": "build/icon.png",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "Milio-Tracker-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Milio Tracker",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}

@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MilioTracker — Dashboard</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090d14;
+      --bg-elevated: #0e1520;
+      --panel: rgba(18, 27, 40, 0.94);
+      --panel-strong: #151f2d;
+      --line: rgba(147, 169, 195, 0.14);
+      --line-strong: rgba(147, 169, 195, 0.26);
+      --text: #f4f8fc;
+      --muted: #8f9daf;
+      --muted-strong: #b9c4d1;
+      --cyan: #57d8ef;
+      --cyan-soft: rgba(87, 216, 239, 0.12);
+      --orange: #ffad5c;
+      --orange-soft: rgba(255, 173, 92, 0.12);
+      --green: #68e0a3;
+      --green-soft: rgba(104, 224, 163, 0.12);
+      --danger: #ff6f7e;
+      --radius-lg: 20px;
+      --radius-md: 13px;
+      --shadow: 0 18px 55px rgba(0, 0, 0, 0.28);
+      --gap: clamp(14px, 1.2vw, 22px);
+      --font: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-width: 0;
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      overflow: hidden;
+      color: var(--text);
+      font-family: var(--font);
+      background:
+        radial-gradient(circle at 12% 7%, rgba(87, 216, 239, 0.09), transparent 30%),
+        radial-gradient(circle at 88% 92%, rgba(255, 173, 92, 0.07), transparent 29%),
+        var(--bg);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: var(--gap);
+      width: 100%;
+      height: 100%;
+      padding: clamp(16px, 1.7vw, 30px);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-width: 0;
+      padding: 0 4px;
+      -webkit-app-region: drag;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      -webkit-app-region: no-drag;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(87, 216, 239, 0.36);
+      border-radius: 13px;
+      color: #061319;
+      font-weight: 900;
+      background: linear-gradient(145deg, #a8f5ff, var(--cyan));
+      box-shadow: 0 0 28px rgba(87, 216, 239, 0.2);
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand-copy h1 {
+      margin: 0;
+      font-size: clamp(1rem, 1.4vw, 1.35rem);
+      letter-spacing: -0.02em;
+    }
+
+    .brand-copy p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .match-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted-strong);
+      font-size: 0.78rem;
+      background: rgba(14, 21, 32, 0.7);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--danger);
+      box-shadow: 0 0 12px rgba(255, 111, 126, 0.72);
+      transition: 180ms ease;
+    }
+
+    .match-status.online .status-dot {
+      background: var(--green);
+      box-shadow: 0 0 12px rgba(104, 224, 163, 0.85);
+    }
+
+    .window-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .window-control {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 34px;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--muted-strong);
+      cursor: pointer;
+      background: rgba(14, 21, 32, 0.72);
+      transition: 150ms ease;
+    }
+
+    .window-control:hover {
+      border-color: rgba(87, 216, 239, 0.35);
+      color: var(--text);
+      background: var(--cyan-soft);
+    }
+
+    .window-control:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 2px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(590px, 1.8fr) minmax(240px, 0.72fr) minmax(290px, 0.9fr);
+      gap: var(--gap);
+      min-width: 0;
+      min-height: 0;
+    }
+
+    .panel {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: linear-gradient(155deg, rgba(21, 31, 45, 0.96), var(--panel));
+      box-shadow: var(--shadow);
+    }
+
+    .panel::before {
+      position: absolute;
+      top: 0;
+      right: 9%;
+      left: 9%;
+      height: 1px;
+      content: "";
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.17), transparent);
+    }
+
+    .panel-inner {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(16px, 2vh, 24px);
+      height: 100%;
+      padding: clamp(18px, 1.6vw, 28px);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--cyan);
+      font-size: 0.67rem;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: clamp(1.15rem, 1.55vw, 1.55rem);
+      letter-spacing: -0.035em;
+    }
+
+    .section-heading .helper {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      padding: 7px 9px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      color: var(--muted-strong);
+      font-size: 0.66rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    /* 1. Setup do campeão */
+    .champion-panel .panel-inner {
+      justify-content: space-between;
+    }
+
+    .champion-summary {
+      display: grid;
+      grid-template-columns: minmax(150px, 0.72fr) minmax(0, 2fr);
+      gap: clamp(14px, 1.4vw, 24px);
+      align-items: stretch;
+    }
+
+    .champion-card,
+    .rune-board,
+    .skill-board,
+    .goal-card,
+    .vision-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: rgba(7, 12, 19, 0.34);
+    }
+
+    .champion-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      min-height: 158px;
+      overflow: hidden;
+      padding: 18px;
+    }
+
+    .champion-card::after {
+      position: absolute;
+      top: -42px;
+      right: -20px;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      content: "M";
+      display: grid;
+      place-items: center;
+      color: rgba(4, 14, 19, 0.75);
+      font-size: 4.4rem;
+      font-weight: 900;
+      background: radial-gradient(circle at 35% 28%, #e7fcff 0 7%, #86ecfa 31%, #2d8191 75%);
+      box-shadow: 0 0 46px rgba(87, 216, 239, 0.22);
+    }
+
+    .champion-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .champion-card strong {
+      font-size: 1.25rem;
+    }
+
+    .champion-card span {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .rune-board {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .rune-tree {
+      min-width: 0;
+      padding: 4px;
+    }
+
+    .rune-tree + .rune-tree {
+      padding-left: 14px;
+      border-left: 1px solid var(--line);
+    }
+
+    .tree-name {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin: 0 0 10px;
+      color: var(--muted-strong);
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .tree-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 9px rgba(87, 216, 239, 0.65);
+    }
+
+    .rune-tree.resolve .tree-dot {
+      background: var(--green);
+      box-shadow: 0 0 9px rgba(104, 224, 163, 0.65);
+    }
+
+    .rune-list {
+      display: grid;
+      gap: 7px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .rune-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      color: #dbe4ed;
+      font-size: 0.76rem;
+      white-space: nowrap;
+    }
+
+    .rune-icon {
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(87, 216, 239, 0.32);
+      border-radius: 8px;
+      color: var(--cyan);
+      font-size: 0.64rem;
+      font-weight: 900;
+      background: var(--cyan-soft);
+    }
+
+    .resolve .rune-icon {
+      border-color: rgba(104, 224, 163, 0.3);
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .skill-board {
+      padding: clamp(13px, 1.1vw, 18px);
+    }
+
+    .skill-board-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .skill-board-header h3 {
+      margin: 0;
+      font-size: 0.82rem;
+      letter-spacing: 0.02em;
+    }
+
+    .skill-priority {
+      color: var(--muted);
+      font-size: 0.7rem;
+    }
+
+    .skill-priority strong {
+      color: var(--orange);
+    }
+
+    .skill-table-wrap {
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--line-strong) transparent;
+    }
+
+    .skill-table {
+      display: grid;
+      grid-template-columns: 48px repeat(18, minmax(26px, 1fr));
+      min-width: 540px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .skill-cell {
+      display: grid;
+      place-items: center;
+      min-height: 34px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.65rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.012);
+    }
+
+    .skill-cell:nth-child(19n) {
+      border-right: 0;
+    }
+
+    .skill-cell:nth-last-child(-n + 19) {
+      border-bottom: 0;
+    }
+
+    .skill-cell.label {
+      color: var(--muted-strong);
+      font-size: 0.67rem;
+      letter-spacing: 0.05em;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .skill-cell.pick {
+      color: #061318;
+      font-size: 0.78rem;
+      font-weight: 900;
+      background: var(--cyan);
+      box-shadow: inset 0 0 0 2px rgba(8, 26, 32, 0.28);
+    }
+
+    .skill-cell.pick.ultimate {
+      color: #1d1204;
+      background: var(--orange);
+    }
+
+    /* 2. Timeline */
+    .timeline-list {
+      position: relative;
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      padding: 2px 0 2px 0;
+      list-style: none;
+      overflow-y: auto;
+    }
+
+    .timeline-list::before {
+      position: absolute;
+      top: 21px;
+      bottom: 21px;
+      left: 10px;
+      width: 1px;
+      content: "";
+      background: var(--line-strong);
+    }
+
+    .timeline-event {
+      position: relative;
+      display: grid;
+      grid-template-columns: 22px 47px minmax(0, 1fr);
+      gap: 8px;
+      align-items: center;
+      padding: 11px 9px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      transition: 160ms ease;
+    }
+
+    .event-dot {
+      position: relative;
+      z-index: 1;
+      width: 9px;
+      height: 9px;
+      margin-left: 6px;
+      border: 2px solid var(--panel-strong);
+      border-radius: 50%;
+      background: #536173;
+      box-shadow: 0 0 0 1px var(--line-strong);
+    }
+
+    .event-time {
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      font-size: 0.69rem;
+      font-weight: 800;
+    }
+
+    .event-copy strong {
+      display: block;
+      overflow: hidden;
+      color: #dce6ef;
+      font-size: 0.78rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .event-copy span {
+      display: block;
+      margin-top: 3px;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 0.65rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Aplique .active ao evento atual via JavaScript. */
+    .timeline-event.active {
+      border-color: rgba(255, 173, 92, 0.28);
+      background: linear-gradient(90deg, var(--orange-soft), rgba(255, 173, 92, 0.025));
+      box-shadow: inset 3px 0 0 var(--orange);
+    }
+
+    .timeline-event.active .event-dot {
+      background: var(--orange);
+      box-shadow: 0 0 14px rgba(255, 173, 92, 0.72);
+    }
+
+    .timeline-event.active .event-time,
+    .timeline-event.active .event-copy strong {
+      color: var(--orange);
+    }
+
+    /* 3. Rastreador de metas */
+    .goals-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .goal-card,
+    .vision-card {
+      padding: 16px;
+    }
+
+    .goal-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .goal-label {
+      color: var(--muted-strong);
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .goal-value {
+      color: var(--text);
+      font-size: 0.75rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .goal-value span {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .goal-value .current {
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .progress-track {
+      height: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .progress-bar {
+      width: var(--progress, 0%);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #35bcd7, var(--cyan));
+      box-shadow: 0 0 15px rgba(87, 216, 239, 0.35);
+    }
+
+    .progress-bar.orange {
+      background: linear-gradient(90deg, #ec844c, var(--orange));
+      box-shadow: 0 0 15px rgba(255, 173, 92, 0.3);
+    }
+
+    .goal-note {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.64rem;
+    }
+
+    .vision-card h3 {
+      margin: 0;
+      font-size: 0.82rem;
+    }
+
+    .vision-card p {
+      margin: 6px 0 14px;
+      color: var(--muted);
+      font-size: 0.7rem;
+      line-height: 1.45;
+    }
+
+    .check-control {
+      position: relative;
+      display: block;
+    }
+
+    .check-control input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .check-button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid rgba(104, 224, 163, 0.22);
+      border-radius: 10px;
+      color: #c9f5df;
+      font-size: 0.7rem;
+      font-weight: 800;
+      cursor: pointer;
+      background: var(--green-soft);
+      transition: 160ms ease;
+    }
+
+    .check-box {
+      display: grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(104, 224, 163, 0.42);
+      border-radius: 6px;
+      color: transparent;
+      background: rgba(0, 0, 0, 0.16);
+    }
+
+    .check-control input:checked + .check-button {
+      border-color: rgba(104, 224, 163, 0.5);
+      color: #07160f;
+      background: var(--green);
+    }
+
+    .check-control input:checked + .check-button .check-box {
+      color: var(--green);
+      background: #07160f;
+    }
+
+    .quick-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+      margin-top: auto;
+    }
+
+    .stat {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: rgba(255, 255, 255, 0.018);
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.63rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 1rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    @media (max-width: 1240px) {
+      body {
+        overflow: auto;
+      }
+
+      .app-shell {
+        height: auto;
+        min-height: 100%;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(260px, 0.45fr);
+      }
+
+      .champion-panel {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .match-status {
+        display: none;
+      }
+
+      .dashboard-grid,
+      .champion-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .rune-board {
+        grid-template-columns: 1fr;
+      }
+
+      .rune-tree + .rune-tree {
+        padding-top: 12px;
+        padding-left: 4px;
+        border-top: 1px solid var(--line);
+        border-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">M</div>
+        <div class="brand-copy">
+          <h1>MilioTracker</h1>
+          <p>Painel de suporte • segundo monitor</p>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="match-status offline" id="match-status" aria-label="Status da partida" aria-live="polite">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span id="match-status-text">Aguardando partida</span>
+        </div>
+
+        <div class="window-controls" aria-label="Controles da janela">
+          <button class="window-control" id="dashboard-minimize" type="button" title="Minimizar" aria-label="Minimizar dashboard">−</button>
+          <button class="window-control" id="dashboard-toggle-size" type="button" title="Diminuir ou maximizar" aria-label="Diminuir ou maximizar dashboard">▣</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-grid">
+      <!-- ÁREA 1: SETUP DO CAMPEÃO -->
+      <section class="panel champion-panel" aria-labelledby="champion-title">
+        <div class="panel-inner">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Setup do campeão</p>
+              <h2 id="champion-title">Milio • Suporte</h2>
+              <p class="helper">Runas e evolução para consulta imediata.</p>
+            </div>
+            <span class="badge">E → W → Q</span>
+          </div>
+
+          <div class="champion-summary">
+            <article class="champion-card" aria-label="Campeão selecionado">
+              <strong>Milio</strong>
+              <span>A Chama Gentil</span>
+            </article>
+
+            <div class="rune-board" aria-label="Runas principais do Milio">
+              <section class="rune-tree">
+                <p class="tree-name"><span class="tree-dot"></span>Feitiçaria</p>
+                <ul class="rune-list">
+                  <li class="rune-item"><span class="rune-icon">A</span>Invocar Aery</li>
+                  <li class="rune-item"><span class="rune-icon">M</span>Faixa de Fluxo de Mana</li>
+                  <li class="rune-item"><span class="rune-icon">T</span>Transcendência</li>
+                  <li class="rune-item"><span class="rune-icon">C</span>Chamuscar</li>
+                </ul>
+              </section>
+
+              <section class="rune-tree resolve">
+                <p class="tree-name"><span class="tree-dot"></span>Determinação</p>
+                <ul class="rune-list">
+                  <li class="rune-item"><span class="rune-icon">O</span>Osso Revestido</li>
+                  <li class="rune-item"><span class="rune-icon">R</span>Revitalizar</li>
+                  <li class="rune-item"><span class="rune-icon">+</span>Aceleração • Adaptativo • Vida</li>
+                </ul>
+              </section>
+            </div>
+          </div>
+
+          <section class="skill-board" aria-labelledby="skill-title">
+            <div class="skill-board-header">
+              <h3 id="skill-title">Ordem de habilidades — níveis 1 a 18</h3>
+              <span class="skill-priority">Prioridade: <strong>E &gt; W &gt; Q</strong></span>
+            </div>
+
+            <div class="skill-table-wrap">
+              <div class="skill-table" role="table" aria-label="Ordem de evolução das habilidades">
+                <div class="skill-cell label" role="columnheader">Nível</div>
+                <div class="skill-cell" role="columnheader">1</div><div class="skill-cell" role="columnheader">2</div><div class="skill-cell" role="columnheader">3</div>
+                <div class="skill-cell" role="columnheader">4</div><div class="skill-cell" role="columnheader">5</div><div class="skill-cell" role="columnheader">6</div>
+                <div class="skill-cell" role="columnheader">7</div><div class="skill-cell" role="columnheader">8</div><div class="skill-cell" role="columnheader">9</div>
+                <div class="skill-cell" role="columnheader">10</div><div class="skill-cell" role="columnheader">11</div><div class="skill-cell" role="columnheader">12</div>
+                <div class="skill-cell" role="columnheader">13</div><div class="skill-cell" role="columnheader">14</div><div class="skill-cell" role="columnheader">15</div>
+                <div class="skill-cell" role="columnheader">16</div><div class="skill-cell" role="columnheader">17</div><div class="skill-cell" role="columnheader">18</div>
+
+                <div class="skill-cell label" role="rowheader">Upar</div>
+                <div class="skill-cell pick">E</div><div class="skill-cell pick">W</div><div class="skill-cell pick">Q</div>
+                <div class="skill-cell pick">E</div><div class="skill-cell pick">E</div><div class="skill-cell pick ultimate">R</div>
+                <div class="skill-cell pick">E</div><div class="skill-cell pick">W</div><div class="skill-cell pick">E</div>
+                <div class="skill-cell pick">W</div><div class="skill-cell pick ultimate">R</div><div class="skill-cell pick">W</div>
+                <div class="skill-cell pick">W</div><div class="skill-cell pick">Q</div><div class="skill-cell pick">Q</div>
+                <div class="skill-cell pick ultimate">R</div><div class="skill-cell pick">Q</div><div class="skill-cell pick">Q</div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- ÁREA 2: TIMELINE DE JOGO -->
+      <section class="panel timeline-panel" aria-labelledby="timeline-title">
+        <div class="panel-inner">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Tempo de jogo</p>
+              <h2 id="timeline-title">Timeline</h2>
+              <p class="helper">Janelas importantes.</p>
+            </div>
+          </div>
+
+          <ol class="timeline-list" id="game-timeline">
+            <li class="timeline-event" data-time="03:30">
+              <span class="event-dot" aria-hidden="true"></span>
+              <time class="event-time">03:30</time>
+              <div class="event-copy"><strong>Aronguejo</strong><span>Prioridade no rio</span></div>
+            </li>
+            <li class="timeline-event" data-time="05:00">
+              <span class="event-dot" aria-hidden="true"></span>
+              <time class="event-time">05:00</time>
+              <div class="event-copy"><strong>Dragão</strong><span>Ward 60s antes</span></div>
+            </li>
+            <li class="timeline-event" data-time="08:00">
+              <span class="event-dot" aria-hidden="true"></span>
+              <time class="event-time">08:00</time>
+              <div class="event-copy"><strong>Grubs</strong><span>Janela de rotação</span></div>
+            </li>
+            <li class="timeline-event" data-time="10:00">
+              <span class="event-dot" aria-hidden="true"></span>
+              <time class="event-time">10:00</time>
+              <div class="event-copy"><strong>Meta de ouro</strong><span>Revisar economia</span></div>
+            </li>
+            <li class="timeline-event" data-time="14:00">
+              <span class="event-dot" aria-hidden="true"></span>
+              <time class="event-time">14:00</time>
+              <div class="event-copy"><strong>Fim das barricadas</strong><span>Preparar mid game</span></div>
+            </li>
+            <li class="timeline-event" data-time="20:00">
+              <span class="event-dot" aria-hidden="true"></span>
+              <time class="event-time">20:00</time>
+              <div class="event-copy"><strong>Barão</strong><span>Visão e lente</span></div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ÁREA 3: RASTREADOR DE METAS -->
+      <section class="panel goals-panel" aria-labelledby="goals-title">
+        <div class="panel-inner">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Performance</p>
+              <h2 id="goals-title">Metas</h2>
+              <p class="helper">Objetivos pessoais da partida.</p>
+            </div>
+          </div>
+
+          <div class="goals-stack">
+            <article class="goal-card" id="gold-goal-card">
+              <div class="goal-topline">
+                <span class="goal-label">Ouro aos 10 min</span>
+                <strong class="goal-value"><span class="current" id="current-gold">0</span> <span>/ 2.200</span></strong>
+              </div>
+              <div class="progress-track" id="gold-progress-track" role="progressbar" aria-label="Progresso de ouro aos 10 minutos" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar" id="gold-progress-bar" style="--progress: 0%;"></div>
+              </div>
+              <div class="goal-note"><span id="gold-progress-label">0% da meta</span><span id="gold-remaining-label">faltam 2.200</span></div>
+            </article>
+
+            <article class="goal-card">
+              <div class="goal-topline">
+                <span class="goal-label">Item de suporte</span>
+                <strong class="goal-value">720 <span>/ 1.000</span></strong>
+              </div>
+              <div class="progress-track" role="progressbar" aria-label="Progresso do item de suporte" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar orange" style="--progress: 72%;"></div>
+              </div>
+              <div class="goal-note"><span>Ritmo saudável</span><span>72%</span></div>
+            </article>
+          </div>
+
+          <article class="vision-card">
+            <h3>Controle de Visão do Dragão</h3>
+            <p>Confirme depois de limpar a área, colocar a sentinela de controle e guardar uma ward de segurança.</p>
+            <label class="check-control">
+              <input id="dragon-vision-check" type="checkbox">
+              <span class="check-button">
+                <span>Visão preparada</span>
+                <span class="check-box" aria-hidden="true">✓</span>
+              </span>
+            </label>
+          </article>
+
+          <div class="quick-stats" aria-label="Resumo do jogador ativo">
+            <article class="stat"><span>KDA</span><strong id="status-kda">— / — / —</strong></article>
+            <article class="stat"><span>Farm (CS)</span><strong id="status-cs">—</strong></article>
+            <article class="stat"><span>Pontuação de visão</span><strong id="status-vision">—</strong></article>
+            <article class="stat"><span>Nível</span><strong id="status-level">—</strong></article>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="dashboard.js" defer></script>
+</body>
+</html>

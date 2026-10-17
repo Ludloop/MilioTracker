@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Controle de visão da botlane — lado azul</title>
+  <desc id="desc">Sete pontos da etapa 03 do guia: duas pinks e cinco wards normais para rota, rio, Dragão e visão profunda.</desc>
+  <defs>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <g id="ward">
+      <circle r="22" fill="#101822" fill-opacity=".9" stroke="currentColor" stroke-width="6"/>
+      <path d="M-12 0Q0-12 12 0Q0 12-12 0Z" fill="none" stroke="#fff" stroke-width="4.5"/>
+      <circle r="4" fill="currentColor"/>
+    </g>
+    <g id="pink">
+      <circle r="25" fill="#261321" fill-opacity=".92" stroke="#ff4fb5" stroke-width="7"/>
+      <path d="M0-16 14 0 0 16-14 0Z" fill="#ff4fb5" stroke="#fff" stroke-width="4"/>
+      <circle r="4" fill="#fff"/>
+    </g>
+  </defs>
+
+  <!-- Coordenadas copiadas de mapData.blue da etapa 03 — Controle de Visão. -->
+  <g filter="url(#glow)" opacity=".9">
+    <g><title>Pink defensiva — Tribush azul</title><use href="#pink" transform="translate(570 740)"/></g>
+    <g color="#50baff"><title>Mato inferior — controle de rota</title><use href="#ward" transform="translate(630 840)"/></g>
+    <g color="#50baff"><title>Mato avançado da Botlane</title><use href="#ward" transform="translate(760 830)"/></g>
+    <g color="#ffd34f"><title>Saída do Bot para o rio</title><use href="#ward" transform="translate(820 670)"/></g>
+    <g color="#bd79ff"><title>Entrada do Dragão</title><use href="#ward" transform="translate(750 600)"/></g>
+    <g color="#ff934f"><title>Visão profunda — entrada da selva vermelha</title><use href="#ward" transform="translate(870 570)"/></g>
+    <g><title>Pink do objetivo — Fosso do Dragão</title><use href="#pink" transform="translate(700 660)"/></g>
+  </g>
+</svg>

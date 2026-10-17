@@ -1,0 +1,40 @@
+:root {
+  color-scheme: dark;
+  background: transparent;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: transparent;
+  pointer-events: none;
+  user-select: none;
+}
+
+.ward-map,
+#ward-layer {
+  width: 100%;
+  height: 100%;
+}
+
+.ward-map {
+  position: relative;
+}
+
+#ward-layer {
+  display: block;
+  object-fit: fill;
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+body.is-connected #ward-layer {
+  opacity: 1;
+}
