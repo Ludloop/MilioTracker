@@ -7,7 +7,7 @@ Built with **Electron, Node.js and JavaScript**.
 <p align="center">
   <img src="assets/screenshots/second-monitor.png" alt="MilioTracker running with League of Legends">
 </p>
----
+
 
 ## ✨ Features
 
@@ -102,3 +102,8 @@ MilioTracker/
 ├── style.css
 ├── package.json
 └── package-lock.json
+
+## ⚠️ Disclaimer
+
+MilioTracker is an independent project and is not endorsed by, affiliated with, or sponsored by Riot Games.
+League of Legends and Riot Games are trademarks of Riot Games, Inc.
